@@ -3,6 +3,8 @@ package com.carservice.api.controller;
 import com.carservice.api.dto.CarPostDTO;
 import com.carservice.api.message.KafkaProducerMessage;
 import com.carservice.api.service.CarPostStoreService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,8 +22,11 @@ public class CarPostController {
     @Autowired
     private KafkaProducerMessage kafkaProducerMessage;
 
+    private final Logger LOG = LoggerFactory.getLogger(CarPostController.class);
+
     @PostMapping("/post")
     public ResponseEntity postCarForSale(@RequestBody CarPostDTO carPostDTO) {
+        LOG.info("MAIN REST API: Producer Car Post information: {}", carPostDTO);
         kafkaProducerMessage.sendMessage(carPostDTO);
         return new ResponseEntity<>(HttpStatus.OK);
     }
